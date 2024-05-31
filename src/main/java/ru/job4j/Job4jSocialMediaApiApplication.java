@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Job4jSocialMediaApiApplication {
 
 	public static void main(String[] args) {
-		System.out.println("test");
 		SpringApplication.run(Job4jSocialMediaApiApplication.class, args);
 	}
 
