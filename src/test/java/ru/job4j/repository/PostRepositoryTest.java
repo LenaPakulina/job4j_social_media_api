@@ -1,14 +1,17 @@
 package ru.job4j.repository;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.job4j.model.Post;
+import ru.job4j.model.Subscriber;
 import ru.job4j.model.User;
 
 import java.time.LocalDateTime;
@@ -17,7 +20,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 class PostRepositoryTest {
     @Autowired
@@ -28,6 +31,9 @@ class PostRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SubscriberRepository subscriberRepository;
 
     @BeforeEach
     void beforeEach() {
@@ -154,12 +160,52 @@ class PostRepositoryTest {
         assertThat(postsInPage2Desc).isEqualTo(List.of(post1));
     }
 
+    @DisplayName("Обновления имени и описания поста")
+    @Test
+    void whenUpdateTitleAndDesc() {
+        List<User> users = userRepository.findAll();
+        Post post = postRepository.save(createPost(users.get(0), "title", "desc", LocalDateTime.now()));
+        int countUpdates = postRepository.updateTitleAndDesc("new title", "new desc", post.getId());
+        assertThat(countUpdates).isEqualTo(1);
+        Optional<Post> result = postRepository.findById(post.getId());
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get().getDescription()).isEqualTo("new desc");
+        assertThat(result.get().getTitle()).isEqualTo("new title");
+    }
+
+    @DisplayName("Список всех постов подписчиков пользователя от сортированных от самых новых к старым с пагинацией")
+    @Test
+    void whenFindPostsByFollowers() {
+        User user1 = userRepository.save(createUser("name", "email1", "password1"));
+        User user2 = userRepository.save(createUser("name", "email2", "password"));
+        User user3 = userRepository.save(createUser("name", "email3", "password"));
+        User user4 = userRepository.save(createUser("name", "email4", "password"));
+        subscriberRepository.save(Subscriber.builder().fromUser(user1).toUser(user2).build());
+        subscriberRepository.save(Subscriber.builder().fromUser(user1).toUser(user3).build());
+        subscriberRepository.save(Subscriber.builder().fromUser(user1).toUser(user4).build());
+        subscriberRepository.save(Subscriber.builder().fromUser(user2).toUser(user1).build());
+        Post post1 = postRepository.save(createPost(user1, "title", "desc", LocalDateTime.now()));
+        Post post2 = postRepository.save(createPost(user2, "title", "desc", LocalDateTime.now()));
+        Post post3 = postRepository.save(createPost(user3, "title", "desc", LocalDateTime.now()));
+        Post post4 = postRepository.save(createPost(user4, "title", "desc", LocalDateTime.now()));
+        Page<Post> result = postRepository.findPostsByFollowers(user1.getId(), PageRequest.of(0, 10));
+        assertThat(result.getContent()).isEqualTo(List.of(post2, post3, post4));
+    }
+
     private Post createPost(User user, String title, String description, LocalDateTime dateTime) {
         return Post.builder()
                 .user(user)
                 .title(title)
                 .description(description)
                 .created(dateTime)
+                .build();
+    }
+
+    private User createUser(String name, String email, String password) {
+        return User.builder()
+                .name(name)
+                .email(email)
+                .password(password)
                 .build();
     }
 }

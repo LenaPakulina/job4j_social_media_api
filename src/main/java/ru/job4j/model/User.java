@@ -36,9 +36,4 @@ public class User {
     @JoinColumn(name = "from_user_id")
     @Builder.Default
     private List<Subscriber> subscribers = new ArrayList<>();
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    @Builder.Default
-    private List<Post> allPosts = new ArrayList<>();
 }
