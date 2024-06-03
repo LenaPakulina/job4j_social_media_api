@@ -18,6 +18,7 @@ public class Subscriber {
     @EqualsAndHashCode.Include
     private int id;
 
+    @Builder.Default
     private LocalDateTime created = LocalDateTime.now();
 
     @ManyToOne

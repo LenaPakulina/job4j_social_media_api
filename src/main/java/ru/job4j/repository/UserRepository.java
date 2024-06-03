@@ -13,7 +13,6 @@ import ru.job4j.model.User;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface UserRepository extends ListCrudRepository<User, Integer> {
     @Query("""
             select user from User user

@@ -15,7 +15,6 @@ import ru.job4j.model.Subscriber;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@EnableJpaRepositories
 public interface PostRepository extends ListCrudRepository<Post, Integer> {
     List<Post> findByUserId(Integer id);
 
