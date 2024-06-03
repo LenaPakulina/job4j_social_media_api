@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.job4j.model.Post;
 import ru.job4j.model.Subscriber;
+import ru.job4j.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,12 +25,12 @@ public interface PostRepository extends ListCrudRepository<Post, Integer> {
 
     @Modifying(clearAutomatically = true)
     @Query("""
-            UPDATE Post SET title = :title, description = :desc
-            WHERE id = :id
+            UPDATE Post p
+            SET p.title = :#{#post.title},
+            description = :#{#post.description}
+            WHERE id = :#{#post.id}
             """)
-    int updateTitleAndDesc(@Param("title") String title,
-                               @Param("desc") String desc,
-                               @Param("id") int id);
+    int updateTitleAndDesc(@Param("post") Post post);
 
     @Modifying(clearAutomatically = true)
     @Query("""

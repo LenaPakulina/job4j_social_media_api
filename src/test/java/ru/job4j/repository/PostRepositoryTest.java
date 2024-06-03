@@ -165,7 +165,7 @@ class PostRepositoryTest {
     void whenUpdateTitleAndDesc() {
         List<User> users = userRepository.findAll();
         Post post = postRepository.save(createPost(users.get(0), "title", "desc", LocalDateTime.now()));
-        int countUpdates = postRepository.updateTitleAndDesc("new title", "new desc", post.getId());
+        int countUpdates = postRepository.updateTitleAndDesc(createPost(users.get(0), "new title", "new desc", LocalDateTime.now()));
         assertThat(countUpdates).isEqualTo(1);
         Optional<Post> result = postRepository.findById(post.getId());
         assertThat(result.isPresent()).isTrue();

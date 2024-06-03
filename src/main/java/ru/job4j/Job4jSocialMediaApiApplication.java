@@ -8,17 +8,8 @@ import org.springframework.context.annotation.ComponentScan;
 import ru.job4j.repository.UserRepository;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"ru.job4j.repository"})
-public class Job4jSocialMediaApiApplication extends SpringBootServletInitializer {
-
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(Job4jSocialMediaApiApplication.class);
-	}
-
+public class Job4jSocialMediaApiApplication {
 	public static void main(String[] args) {
-		var context = SpringApplication.run(Job4jSocialMediaApiApplication.class, args);
-		System.out.println(context.getBean(UserRepository.class));
+		SpringApplication.run(Job4jSocialMediaApiApplication.class, args);
 	}
-
 }

@@ -2,6 +2,7 @@ package ru.job4j.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -36,4 +37,20 @@ public interface UserRepository extends ListCrudRepository<User, Integer> {
             )
             """)
     List<User> findAllFriendsById(int id);
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+            delete from User u where u.id = ?1
+            """)
+    int deleteUserById(int id);
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        update User u
+        set u.name = :#{#user.name},
+        u.email = :#{#user.email},
+        u.timezone = :#{#user.timezone}
+        where u.id=:#{#user.id}
+        """)
+    int update(@Param("user") User user);
 }
