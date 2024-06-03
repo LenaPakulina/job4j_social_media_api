@@ -31,9 +31,4 @@ public class User {
 
     @Column(name = "user_zone")
     private String timezone;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "from_user_id")
-    @Builder.Default
-    private List<Subscriber> subscribers = new ArrayList<>();
 }
