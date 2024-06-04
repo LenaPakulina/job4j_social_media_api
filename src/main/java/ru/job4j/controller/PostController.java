@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.job4j.model.Post;
 import ru.job4j.service.PostService;
-import ru.job4j.service.PostService;
 
 @RestController
 @RequestMapping("/post")
