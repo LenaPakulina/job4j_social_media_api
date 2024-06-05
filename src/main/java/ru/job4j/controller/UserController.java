@@ -1,9 +1,13 @@
 package ru.job4j.controller;
 
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.job4j.model.User;
@@ -13,6 +17,7 @@ import jakarta.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
 
+@Validated
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -20,7 +25,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
         userService.save(user);
         var uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -34,7 +39,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> get(@PathVariable("userId")
-                                        @Min(value = 1, message = "номер ресурса должен быть 1 и более")
+                                        @Positive(message = "userId должен быть положительным числом")
                                         Integer userId) {
         return userService.findById(userId)
                 .map(ResponseEntity::ok)
@@ -42,7 +47,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody User user) {
+    public ResponseEntity<Void> update(@Valid @RequestBody User user) {
         if (userService.update(user)) {
             return ResponseEntity.ok().build();
         }
@@ -50,7 +55,10 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> removeById(@PathVariable int userId) {
+    public ResponseEntity<Void> removeById(@PathVariable
+                                               @NotNull
+                                               @Positive(message = "userId должен быть положительным числом")
+                                               int userId) {
         if (userService.deleteById(userId)) {
             return ResponseEntity.noContent().build();
         }

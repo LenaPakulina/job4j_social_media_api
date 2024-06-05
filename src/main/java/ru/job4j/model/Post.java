@@ -1,6 +1,9 @@
 package ru.job4j.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,13 +21,16 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
+    @Positive
     private int id;
 
     @Builder.Default
     private LocalDateTime created = LocalDateTime.now();
 
+    @NotBlank(message = "параметр название (title) не может быть пустым")
     private String title;
 
+    @NotBlank(message = "параметр описание (description) не может быть пустым")
     private String description;
 
     @ManyToOne
