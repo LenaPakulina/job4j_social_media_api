@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,6 +25,7 @@ import ru.job4j.service.PostService;
 @Validated
 @RestController
 @RequestMapping("/post")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class PostController {
     @Autowired
     private PostService postService;
@@ -34,6 +36,7 @@ public class PostController {
             @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @PostMapping
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Post> create(@Valid @RequestBody Post post) {
         postService.save(post);
         var uri = ServletUriComponentsBuilder
@@ -52,6 +55,7 @@ public class PostController {
             @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @GetMapping("/{postId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Post> get(@PathVariable("postId")
                                         @NotNull
                                         @Positive(message = "postId должен быть положительным числом")
@@ -67,6 +71,7 @@ public class PostController {
             @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @PutMapping
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Void> update(@Valid @RequestBody Post post) {
         if (postService.update(post)) {
             return ResponseEntity.ok().build();
@@ -80,6 +85,7 @@ public class PostController {
             @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @DeleteMapping("/{postId}")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Void> removeById(@PathVariable("postId")
                                                @NotNull
                                                @Positive(message = "postId должен быть положительным числом")

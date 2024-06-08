@@ -53,4 +53,10 @@ public interface UserRepository extends ListCrudRepository<User, Integer> {
         where u.id=:#{#user.id}
         """)
     int update(@Param("user") User user);
+
+    Optional<User> findByName(String name);
+
+    Boolean existsByName(String name);
+
+    Boolean existsByEmail(String email);
 }

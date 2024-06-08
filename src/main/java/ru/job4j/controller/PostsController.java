@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.dto.UserPostsDto;
 import ru.job4j.model.Post;
@@ -18,6 +19,7 @@ import java.util.List;
 @Tag(name = "PostsController", description = "PostsController management APIs")
 @RestController
 @RequestMapping("/posts")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class PostsController {
     @Autowired
     private PostService postService;
@@ -29,6 +31,7 @@ public class PostsController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<Post> getAll() {
         return postService.findAll();
     }
@@ -41,6 +44,7 @@ public class PostsController {
 
     @GetMapping("/usersIds")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<UserPostsDto> getListDto(@RequestParam List<Integer> usersIds) {
         return postService.convert(usersIds);
     }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,6 +28,7 @@ import java.util.TimeZone;
 @Validated
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
     @Autowired
     private UserService userService;
@@ -37,6 +39,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @PostMapping
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         userService.save(user);
         var uri = ServletUriComponentsBuilder
@@ -58,6 +61,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @GetMapping("/{userId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<User> get(@PathVariable("userId")
                                         @Positive(message = "userId должен быть положительным числом")
                                         Integer userId) {
@@ -72,6 +76,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @PutMapping
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Void> update(@Valid @RequestBody User user) {
         if (userService.update(user)) {
             return ResponseEntity.ok().build();
@@ -85,6 +90,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> removeById(@PathVariable
                                                @NotNull
                                                @Positive(message = "userId должен быть положительным числом")
