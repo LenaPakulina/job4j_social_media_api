@@ -3,6 +3,7 @@ package ru.job4j.repository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class PostRepositoryTest {
     @Autowired
     private PostRepository postRepository;
@@ -37,12 +39,12 @@ class PostRepositoryTest {
     void beforeEach() {
         userRepository.save(User.builder()
                 .name("name")
-                .email("email1")
+                .email("email_1")
                 .password("password")
                 .build());
         userRepository.save(User.builder()
                 .name("name")
-                .email("email2")
+                .email("email_2")
                 .password("password")
                 .build());
     }

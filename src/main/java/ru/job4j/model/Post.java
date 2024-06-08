@@ -42,7 +42,7 @@ public class Post {
     private List<File> files = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "post_id")
     @Builder.Default
     private List<PostUpdateHistory> updateHistory = new ArrayList<>();
 }
