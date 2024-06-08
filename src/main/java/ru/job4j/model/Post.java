@@ -21,7 +21,6 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    @Positive
     private int id;
 
     @Builder.Default
