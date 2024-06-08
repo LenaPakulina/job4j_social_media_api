@@ -1,5 +1,11 @@
 package ru.job4j.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -17,12 +23,18 @@ import jakarta.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
 
+@Tag(name = "UserController", description = "UserController management APIs")
 @Validated
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Operation(summary = "Create user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = User.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @PostMapping
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
@@ -37,6 +49,14 @@ public class UserController {
                 .body(user);
     }
 
+    @Operation(
+            summary = "Retrieve a User by userId",
+            description = "Get a User object by specifying its userId. The response is User object with userId, username and date of created."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = User.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
+
     @GetMapping("/{userId}")
     public ResponseEntity<User> get(@PathVariable("userId")
                                         @Positive(message = "userId должен быть положительным числом")
@@ -46,6 +66,11 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Update user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = User.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
+
     @PutMapping
     public ResponseEntity<Void> update(@Valid @RequestBody User user) {
         if (userService.update(user)) {
@@ -53,6 +78,11 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @Operation(summary = "Remove user by id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = User.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> removeById(@PathVariable

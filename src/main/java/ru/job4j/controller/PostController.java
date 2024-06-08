@@ -1,5 +1,11 @@
 package ru.job4j.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -11,14 +17,21 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.job4j.model.Post;
+import ru.job4j.model.User;
 import ru.job4j.service.PostService;
 
+@Tag(name = "PostController", description = "PostController management APIs")
 @Validated
 @RestController
 @RequestMapping("/post")
 public class PostController {
     @Autowired
     private PostService postService;
+
+    @Operation(summary = "Create post")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Post.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @PostMapping
     public ResponseEntity<Post> create(@Valid @RequestBody Post post) {
@@ -33,6 +46,11 @@ public class PostController {
                 .body(post);
     }
 
+    @Operation(summary = "Retrieve a post by postId")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Post.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
+
     @GetMapping("/{postId}")
     public ResponseEntity<Post> get(@PathVariable("postId")
                                         @NotNull
@@ -43,6 +61,11 @@ public class PostController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Update post by Id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Post.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
+
     @PutMapping
     public ResponseEntity<Void> update(@Valid @RequestBody Post post) {
         if (postService.update(post)) {
@@ -50,6 +73,11 @@ public class PostController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @Operation(summary = "Remove post by postId")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Post.class), mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema()) }) })
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> removeById(@PathVariable("postId")

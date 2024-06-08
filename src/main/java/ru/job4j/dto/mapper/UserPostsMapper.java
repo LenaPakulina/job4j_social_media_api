@@ -1,5 +1,6 @@
-package ru.job4j.dto;
+package ru.job4j.dto.mapper;
 
+import ru.job4j.dto.UserPostsDto;
 import ru.job4j.model.Post;
 import ru.job4j.model.User;
 
